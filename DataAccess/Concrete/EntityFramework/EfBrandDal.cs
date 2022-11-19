@@ -1,4 +1,5 @@
-﻿using DataAccess.Abstract;
+﻿using Core.DataAccess.EntityFramework;
+using DataAccess.Abstract;
 using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,52 +10,9 @@ using System.Text;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class EfBrandDal : IBrandDal
+    public class EfBrandDal : EfEntityRepositoryBase<Brand,RentaCarDbContext>,IBrandDal
     {
-        public void Add(Brand entity)
-        {
-            using (RentaCarDbContext context=new RentaCarDbContext())
-            {
-                var addedBrand = context.Entry(entity);
-                addedBrand.State = EntityState.Added;
-                context.SaveChanges();
-            }
-        }
-
-        public void Delete(Brand entity)
-        {
-            using (RentaCarDbContext context = new RentaCarDbContext())
-            {
-                var deletedBrand = context.Entry(entity);
-                deletedBrand.State = EntityState.Deleted;
-                context.SaveChanges();
-            }
-        }
-        public void Update(Brand entity)
-        {
-            using (RentaCarDbContext context = new RentaCarDbContext())
-            {
-                var updatedBrand = context.Entry(entity);
-                updatedBrand.State = EntityState.Modified;
-                context.SaveChanges();
-            }
-        }
-
-        public Brand Get(Expression<Func<Brand, bool>> filter)
-        {
-            using (RentaCarDbContext context = new RentaCarDbContext())
-            {
-                return context.Set<Brand>().SingleOrDefault(filter);
-            }
-        }
-
-        public List<Brand> GetAll(Expression<Func<Brand, bool>> filter = null)
-        {
-            using (RentaCarDbContext context = new RentaCarDbContext())
-            {
-                return context.Set<Brand>().ToList();
-            }
-        }
+      
   
     }
 }

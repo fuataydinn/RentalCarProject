@@ -32,8 +32,9 @@ namespace Business.Concrete
             }
         }
 
-        public IResult Delete(Car car)
+        public IResult Delete(int id)
         {
+            var car = _carDal.GetById(x=>x.Id==id);
             _carDal.Delete(car);
             return new SuccessResult(Messages.ProductsDeleted);
 

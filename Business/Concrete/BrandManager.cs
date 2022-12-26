@@ -1,8 +1,11 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,10 +23,21 @@ namespace Business.Concrete
 
         public IResult Add(Brand brand)
         {
-            if (brand.Name.Length < 3)
-            {
-                return new ErrorResult(Messages.ProductNameInvalid);
-            }
+            //Business codes : İş gereksinimleri .. 
+            //Validation     : İş kuralllarına yapısal olarak uygun mu diye kontrol eder. 
+
+            //Bu kuralları her seferinde yazmak yerine bunu bir kere merkezi bir yerde yazarız. Fluent validation ile...
+
+            //var context = new ValidationContext<Brand>(brand);
+            //BrandValidator brandValidator = new BrandValidator();
+            //var result = brandValidator.Validate(context);
+            //if (!result.IsValid)                                          ==> Bu fluent validation her seferınde yazmamak icin -- core -- CrossCuttingConcerns 
+            //{                                                             tarafında generic hale getirdik ve oradan her yere cagirabilecegiz...
+            //    throw new ValidationException(result.Errors);
+            //}
+
+            ValidationTool.Validate(new BrandValidator(),brand);  // Olusturdumuz generic validator
+
             _brandDal.Add(brand);
             return new SuccessResult(Messages.ProductAdded);
         }
@@ -37,7 +51,7 @@ namespace Business.Concrete
 
         public IDataResult<List<Brand>> GetAll()
         {
-            if (DateTime.Now.Hour == 22)
+            if (DateTime.Now.Hour == 1)
             {
                 return new ErrorDataResult<List<Brand>>(Messages.MaintenanceTime);
             }

@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -20,7 +21,7 @@ namespace Business.Concrete
         {
             _brandDal = brandDal;
         }
-
+        [ValidationAspect(typeof(BrandValidator))]
         public IResult Add(Brand brand)
         {
             //Business codes : İş gereksinimleri .. 
@@ -36,7 +37,7 @@ namespace Business.Concrete
             //    throw new ValidationException(result.Errors);
             //}
 
-            ValidationTool.Validate(new BrandValidator(),brand);  // Olusturdumuz generic validator
+           // ValidationTool.Validate(new BrandValidator(),brand);  // Olusturdumuz generic validator
 
             _brandDal.Add(brand);
             return new SuccessResult(Messages.ProductAdded);

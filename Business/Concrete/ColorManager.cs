@@ -22,7 +22,7 @@ namespace Business.Concrete
         {
 
             _colorDal.Add(color);
-            return new SuccessResult(Messages.ProductNameInvalid);
+            return new SuccessResult(Messages.ColorAdded);
 
         }
 
@@ -30,12 +30,12 @@ namespace Business.Concrete
         {
             var color = _colorDal.GetById(x => x.ColorId == id);
             _colorDal.Delete(color);
-            return new SuccessResult(Messages.ProductsDeleted);
+            return new SuccessResult(Messages.ColorDeleted);
         }
 
         public IDataResult<List<Color>> GetAll()
         {
-            return new SuccessDataResult<List<Color>>(_colorDal.GetAll());
+            return new SuccessDataResult<List<Color>>(_colorDal.GetAll(),Messages.ColorsListed);
 
         }
 
@@ -47,7 +47,7 @@ namespace Business.Concrete
         public IResult Update(Color color)
         {
             _colorDal.Update(color);
-            return new SuccessResult(Messages.ProductsUpdated);
+            return new SuccessResult(Messages.ColorUpdated);
         }
     }
 }

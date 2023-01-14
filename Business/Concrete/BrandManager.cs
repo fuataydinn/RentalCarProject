@@ -3,6 +3,7 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -21,6 +22,7 @@ namespace Business.Concrete
         {
             _brandDal = brandDal;
         }
+
         [ValidationAspect(typeof(BrandValidator))]
         public IResult Add(Brand brand)
         {
@@ -37,17 +39,23 @@ namespace Business.Concrete
             //    throw new ValidationException(result.Errors);
             //}
 
-           // ValidationTool.Validate(new BrandValidator(),brand);  // Olusturdumuz generic validator
+            // ValidationTool.Validate(new BrandValidator(),brand);  // Olusturdumuz generic validator
+            //IResult result = BusinessRules.Run(CheckIfBrandCountOfNameCorrect(brand.Name), CheckIfBrandId(brand.BrandId));
+
+            //if (result != null)
+            //{
+            //    return result;
+            //}
 
             _brandDal.Add(brand);
-            return new SuccessResult(Messages.ProductAdded);
-        }
+            return new SuccessResult(Messages.BrandAdded);
 
+        }
         public IResult Delete(int id)
         {
             var brand = _brandDal.GetById(x => x.BrandId == id);
             _brandDal.Delete(brand);
-            return new SuccessResult(Messages.ProductsDeleted);
+            return new SuccessResult(Messages.BrandDeleted);
         }
 
         public IDataResult<List<Brand>> GetAll()
@@ -57,7 +65,7 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<Brand>>(Messages.MaintenanceTime);
             }
 
-            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(), Messages.ProductsListed.ToString());
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(), Messages.BrandListed.ToString());
         }
 
         public IDataResult<Brand> GetById(int id)
@@ -68,7 +76,31 @@ namespace Business.Concrete
         public IResult Update(Brand brand)
         {
             _brandDal.Update(brand);
-            return new SuccessResult(Messages.ProductsUpdated);
+            return new SuccessResult(Messages.BrandUpdated);
+        }
+
+        private IResult CheckIfBrandCountOfNameCorrect(string brandName)
+        {
+
+            var result = _brandDal.GetAll(b => b.Name == brandName).Count;
+            if (result >= 10)
+            {
+                return new ErrorResult(Messages.BrandNameCountException);
+            }
+
+            return new SuccessResult();
+        }
+
+        private IResult CheckIfBrandId(int id)
+        {
+            //oylesine yazilmis kural
+            var result = _brandDal.GetAll(b => b.BrandId == id);
+            if (result != null)
+            {
+                return new ErrorResult(Messages.BrandNameCountException);
+            }
+
+            return new SuccessResult();
         }
     }
 }

@@ -21,19 +21,19 @@ namespace Business.Concrete
         public IResult Add(User user)
         {
             _userDal.Add(user);
-            return new SuccessResult(Messages.ProductAdded);
+            return new SuccessResult(Messages.UserAdded);
         }
 
         public IResult Delete(int id)
         {
             var user = _userDal.GetById(x => x.Id == id);
             _userDal.Delete(user);
-            return new SuccessResult(Messages.ProductsDeleted);
+            return new SuccessResult(Messages.UserDeleted);
         }
         public IResult Update(User user)
         {
             _userDal.Update(user);
-            return new SuccessResult(Messages.ProductsUpdated);
+            return new SuccessResult(Messages.UserUpdated);
         }
         public IDataResult<List<User>> GetAll()
         {
@@ -41,12 +41,12 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<List<User>>(_userDal.GetAll(), Messages.SaveFailed);
             }
-            return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.ProductsListed);
+            return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.UsersListed);
         }
 
         public IDataResult<User> GetById(int id)
         {
-            return new SuccessDataResult<User>(_userDal.GetById(u => u.Id == id), Messages.ProductsListed);
+            return new SuccessDataResult<User>(_userDal.GetById(u => u.Id == id), Messages.UserByIdListed);
         }
     }
 }

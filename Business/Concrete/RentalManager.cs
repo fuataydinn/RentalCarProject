@@ -26,36 +26,36 @@ namespace Business.Concrete
                 return new ErrorResult(Messages.SaveFailed);
             }
             _rentalDal.Add(rental);
-            return new SuccessResult(Messages.ProductAdded);
+            return new SuccessResult(Messages.RentalAdded);
         }
 
         public IResult Delete(int id)
         {
             var rental = _rentalDal.GetById(x=>x.Id==id);
             _rentalDal.Delete(rental);
-            return new SuccessResult(Messages.ProductsDeleted);
+            return new SuccessResult(Messages.RentalDeleted);
 
         }
 
         public IResult Update(Rental rental)
         {
             _rentalDal.Update(rental);
-            return new SuccessResult(Messages.ProductsUpdated);
+            return new SuccessResult(Messages.RentalUpdated);
         }
 
         public IDataResult<List<Rental>> GetAll()
         {
-            return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll(),Messages.ProductsListed);
+            return new SuccessDataResult<List<Rental>>(_rentalDal.GetAll(),Messages.RentalsListed);
         }
 
         public IDataResult<Rental> GetById(int id)
         {
-            return new SuccessDataResult<Rental>(_rentalDal.GetById(r=>r.Id==id), Messages.ProductsListed);
+            return new SuccessDataResult<Rental>(_rentalDal.GetById(r=>r.Id==id), Messages.RentalListed);
         }
 
         public IDataResult<List<RentalDetailDto>> GetRentalDetails()
         {
-            return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetails(), Messages.ProductsListed);
+            return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetails(), Messages.RentalDetails);
         }
     }
 }

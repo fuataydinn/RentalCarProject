@@ -24,11 +24,11 @@ namespace Business.Concrete
             if (car.Description.Length >= 2 && car.DailyPrice > 0)
             {
                 _carDal.Add(car);
-                return new SuccessResult(Messages.ProductAdded);
+                return new SuccessResult(Messages.CarAdded);
             }
             else
             {
-                return new SuccessResult(Messages.ProductNameInvalid);
+                return new SuccessResult(Messages.CarNameInvalid);
             }
         }
 
@@ -36,19 +36,19 @@ namespace Business.Concrete
         {
             var car = _carDal.GetById(x=>x.Id==id);
             _carDal.Delete(car);
-            return new SuccessResult(Messages.ProductsDeleted);
+            return new SuccessResult(Messages.CarDeleted);
 
         }
 
         public IResult Update(Car car)
         {
             _carDal.Update(car);
-            return new SuccessResult(Messages.ProductsUpdated);
+            return new SuccessResult(Messages.CarUpdated);
         }
 
         public IDataResult<List<Car>> GetAll()
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.ProductsListed.ToString());
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.CarsListed.ToString());
         }
 
         public IDataResult<List<Car>> GetCarsByBrandId(int id)
@@ -63,7 +63,7 @@ namespace Business.Concrete
 
         public IDataResult<List<CarDetailDto>> GetCarDetails()
         {
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(),Messages.ProductsListed.ToString());
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(),Messages.CarDetailListed.ToString());
         }
     }
 }

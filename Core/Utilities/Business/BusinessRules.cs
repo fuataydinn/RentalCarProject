@@ -12,7 +12,7 @@ namespace Core.Utilities.Business
         {
             foreach (var logic in logics)
             {
-                if (!logic.Success)
+                if (!logic.Success)  //basarısız ise errorResult dön
                 {
                     return logic;
                 }

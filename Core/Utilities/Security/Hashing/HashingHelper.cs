@@ -6,7 +6,7 @@ namespace Core.Utilities.Security.Hashing
 {
     public class HashingHelper
     {
-        public static void CreatePasswordash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        public static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {// verilen pass'in hash'ini olusturur bu metod
             // out dısa donulecek deger demek 
             //burada biz bir password vericez ve bize 2 adet out donecek 

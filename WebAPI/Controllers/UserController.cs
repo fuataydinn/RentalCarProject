@@ -1,6 +1,5 @@
 ﻿using Business.Abstract;
-using Entities.Concrete;
-using Microsoft.AspNetCore.Http;
+using Core.Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,32 +13,20 @@ namespace WebAPI.Controllers
     public class UsersController : ControllerBase
     {
         IUserService _userService;
-
         public UsersController(IUserService userService)
         {
             _userService = userService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll()
+        [HttpGet("getbymail")]
+        public IActionResult GetByMail(string email)
         {
-            var result = _userService.GetAll();
+            var result = _userService.GetByMail(email);
             if (result.Success)
             {
                 return Ok(result);
             }
-            return BadRequest();
-        }
-
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
-        {
-            var result = _userService.GetById(id);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest();
+            return BadRequest(result);
         }
 
         [HttpPost("add")]
@@ -50,10 +37,10 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest();
+            return BadRequest(result);
         }
 
-        [HttpPut("update")]
+        [HttpPost("update")]
         public IActionResult Update(User user)
         {
             var result = _userService.Update(user);
@@ -61,19 +48,28 @@ namespace WebAPI.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest();
+            return BadRequest(result);
         }
-
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpPost("updatepassword")]
+        public IActionResult UpdatePassword(User user, string password)
         {
-            var result = _userService.Delete(id);
+            var result = _userService.UpdatePassword(user, password);
             if (result.Success)
             {
                 return Ok(result);
             }
-            return BadRequest();
+            return BadRequest(result);
+        }
+
+        [HttpPost("delete")]
+        public IActionResult Delete(User user)
+        {
+            var result = _userService.Delete(user);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

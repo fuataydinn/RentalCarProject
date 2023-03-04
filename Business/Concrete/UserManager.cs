@@ -1,16 +1,17 @@
 ﻿using Business.Abstract;
 using Business.Constants;
-using Core.Utilities.Business;
+using Core.Aspects.Autofac.Validation;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
+using Core.Utilities.Security.Hashing;
 using DataAccess.Abstract;
-using Entities.Concrete;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
 {
+
     public class UserManager : IUserService
     {
         IUserDal _userDal;
@@ -20,63 +21,68 @@ namespace Business.Concrete
             _userDal = userDal;
         }
 
-        public IResult Add(User user)
+        public IResult Add(User entity)
         {
-          IResult result=BusinessRules.Run(CheckIfUserNameLengthCorrect(user), CheckIfUserName(user.FirstName));
-
-            if (result!=null)
-            {
-                return result;
-            }
-            _userDal.Add(user);
-
-            return new SuccessResult(Messages.UserAdded);        
+            _userDal.Add(entity);
+            return new SuccessResult(Messages.UserAdded);
         }
 
-        public IResult Delete(int id)
+        public IResult Update(User entity)
         {
-            var user = _userDal.GetById(x => x.Id == id);
-            _userDal.Delete(user);
-            return new SuccessResult(Messages.UserDeleted);
-        }
-        public IResult Update(User user)
-        {
-            _userDal.Update(user);
+            _userDal.Update(entity);
             return new SuccessResult(Messages.UserUpdated);
         }
-        public IDataResult<List<User>> GetAll()
+
+        public IResult UpdatePassword(User entity, string password)
         {
-            if (_userDal.GetAll().Count == 0)
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            var user = new User
             {
-                return new ErrorDataResult<List<User>>(_userDal.GetAll(), Messages.SaveFailed);
+                Id = entity.Id,
+                Email = entity.Email,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Status = true
+            };
+            _userDal.Update(user);
+            return new SuccessResult(Messages.UserAdded);
+        }
+
+
+        public IResult Delete(User entity)
+        {
+            _userDal.Delete(entity);
+            return new SuccessResult(Messages.UserAdded);
+        }
+
+
+        public IDataResult<List<OperationClaim>> GetClaims(User user)
+        {
+            return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user), Messages.ClaimsListed);
+        }
+        public IDataResult<User> GetByMail(string email)
+        {
+            var result = _userDal.GetById(u => u.Email == email);
+            if (result == null)
+            {
+                return new ErrorDataResult<User>(Messages.UserNotFound);
             }
-            return new SuccessDataResult<List<User>>(_userDal.GetAll(), Messages.UsersListed);
+            return new SuccessDataResult<User>(result, Messages.UsersListed);
         }
 
         public IDataResult<User> GetById(int id)
         {
-            return new SuccessDataResult<User>(_userDal.GetById(u => u.Id == id), Messages.UserByIdListed);
+            var result = _userDal.GetById(u => u.Id == id);
+            if (result == null)
+            {
+                return new ErrorDataResult<User>(Messages.UserNotFound);
+            }
+            return new SuccessDataResult<User>(result, Messages.UserByIdListed);
         }
 
-        private IResult CheckIfUserNameLengthCorrect(User user)
-        {
-            if (user.FirstName.Length < 5)
-            {
-                return new ErrorResult(Messages.SaveFailed);
-            }
-            return new SuccessResult();
-        }
 
-        private IResult CheckIfUserName(string userName)
-        {
-            //Aynı isimde ürün var mı ? 
-            var result = _userDal.GetAll(x => x.FirstName == userName).Any();
-            if (result)
-            {
-                return new ErrorResult();
-            }
-            return new SuccessResult();
-          
-        }
     }
 }
